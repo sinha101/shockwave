@@ -6,7 +6,7 @@ from passlib.hash import sha256_crypt
 from flask_mysqldb import MySQL
 from sqlhelpers import *
 from forms import *
-
+from functools import wraps
 
 
 app = Flask(__name__)
@@ -20,6 +20,16 @@ app.config['MYSQL_DB']= 'crypto'
 app.config['MYSQL_CURSORCLASS']='DictCursor'
 
 mysql= MySQL(app)
+
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("unauthorized,please login.","danger")
+            return redirect(url_for('login'))
+    return wrap
 
 def log_in_user(username):
     users= Table("users","name","email","username","password")
@@ -82,16 +92,22 @@ def login():
 
 
 @app.route("/logout")
+@is_logged_in
 def logout():
     session.clear()
     flash("Logout success", "success")
     return redirect(url_for('login'))
 
+
+
 @app.route("/dashboard")
+@is_logged_in
 def dashboard():
     return render_template('dashboard.html',session=session)
+
 @app.route("/")
 def index():
+    send_money("BANK","sinha",100)
     return render_template('index.html')
 
 if __name__ == '__main__':
