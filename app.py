@@ -90,6 +90,24 @@ def login():
 
     return render_template('login.html')
 
+@app.route("/transaction", methods=['GET','POST'])
+@is_logged_in
+def transaction():
+    form= SendMoneyForm(request.form)
+    balance = get_balance(session.get('Username'))
+
+    if request.method == 'POST':
+        try:
+            send_money(session.get('Username'),form.username.data, form.amoumt.data)
+            flash("Money Sent!", "success")
+        except Exception as e:
+            flash(str(e), 'danger')
+
+        return redirect(url_for('transaction'))
+    return render_template('transaction.html', balance=balance, form=form)
+
+
+
 
 @app.route("/logout")
 @is_logged_in
@@ -107,7 +125,7 @@ def dashboard():
 
 @app.route("/")
 def index():
-    send_money("BANK","sinha",100)
+
     return render_template('index.html')
 
 if __name__ == '__main__':

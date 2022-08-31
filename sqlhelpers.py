@@ -1,7 +1,6 @@
 from app import mysql, session
 from blockchain import Block, Blockchain
 
-
 #custom exceptions for transaction errors
 class InvalidTransactionException(Exception): pass
 class InsufficientFundsException(Exception): pass
@@ -100,57 +99,6 @@ def isnewuser(username):
 
     return False if username in usernames else True
 
-def send_money(sender, recipient, amount):
-    try: amount= float(amount)
-    except ValueError:
-        raise InvalidTransactionException("Invalid Transaction.")
-
-    if amount > get_balance(sender) and sender != "BANK":
-        raise InsufficientFundsException("Insufficient Funds.")
-    elif sender == recipient or amount <= 0.00:
-        raise InvalidTransactionException("Invalid Transaction")
-    elif isnewuser(recipient):
-        raise InvalidTransactionException("User Does Not Exist")
-
-        blockchain = get_blockchain()
-        number =len(blockchain.chain) + 1
-        data= "%s-->%s-->%s" %(sender,recipient,amount)
-        blockchain.mine(Block(number,data=data))
-        sync_blockchain(blockchain)
-
-
-def get_balance(username):
-    balance = 0.0
-    blockchain= get_blockchain()
-    for block in blockchain.chain:
-        data= block.data.split("-->")
-        if username == data[0]:
-            balance -= float(data[2])
-        elif username == data[1]:
-            balance += float(data[2])
-    return balance
-
-
-
-  
-
-
-def get_blockchain():
-    blockchain= Blockchain()
-    blockchain_sql= Table("blockchain", "number","hash","previous","data","nonce")
-    for b in blockchain_sql.getall():
-        blockchain.add(Block(int(b.get('number')), b.get('previous'),b.get('data'),int(b.get('nonce'))))
-    return blockchain
-
-
-def sync_blockchain(blockchain):
-    blockchain_sql = ("blockchain", "number","hash","previous","data","nonce")
-    blockchain_sql.deleteall()
-
-    for block in blockchain.chain:
-        blockchain_sql.insert(str(block.number), block.hash(), block.previous_hash, block.data, block.nonce)
- 
-
 #send money from one user to another
 def send_money(sender, recipient, amount):
     #verify that the amount is an integer or floating value
@@ -178,16 +126,16 @@ def send_money(sender, recipient, amount):
     sync_blockchain(blockchain)
 
 #get the balance of a user
-def get_balance(username):
+def get_balance(Username):
     balance = 0.00
     blockchain = get_blockchain()
 
     #loop through the blockchain and update balance
     for block in blockchain.chain:
         data = block.data.split("-->")
-        if username == data[0]:
+        if Username == data[0]:
             balance -= float(data[2])
-        elif username == data[1]:
+        elif Username == data[1]:
             balance += float(data[2])
     return balance
 
@@ -207,4 +155,3 @@ def sync_blockchain(blockchain):
 
     for block in blockchain.chain:
         blockchain_sql.insert(str(block.number), block.hash(), block.previous_hash, block.data, block.nonce)
-
