@@ -135,8 +135,7 @@ def get_balance(Username):
         data = block.data.split("-->")
         if Username == data[0]:
             balance -= float(data[2])
-        elif Username == data[1]:
-            balance += float(data[2])
+
     return balance
 
 #get the blockchain from mysql and convert to Blockchain object
