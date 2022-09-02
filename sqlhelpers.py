@@ -137,6 +137,7 @@ def get_balance(Username):
             balance -= float(data[2])
 
 
+
     return balance
 
 #get the blockchain from mysql and convert to Blockchain object
