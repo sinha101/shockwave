@@ -112,7 +112,7 @@ def transaction():
 @is_logged_in
 def buy():
     form = BuyForm(request.form)
-    balance = get_balance(session.get('username'))
+    balance = get_balance(session.get('Username'))
 
     if request.method == 'POST':
         #attempt to buy amount
@@ -147,7 +147,6 @@ def dashboard():
 @app.route("/")
 @app.route("/index")
 def index():
-
 
     return render_template('index.html')
 

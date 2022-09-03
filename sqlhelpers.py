@@ -136,6 +136,9 @@ def get_balance(Username):
         if Username == data[0]:
             balance -= float(data[2])
 
+        elif Username == data[1]:
+            balance += float(data[2])
+
 
 
     return balance
