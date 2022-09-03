@@ -126,21 +126,17 @@ def send_money(sender, recipient, amount):
     sync_blockchain(blockchain)
 
 #get the balance of a user
-def get_balance(Username):
+def get_balance(username):
     balance = 0.00
     blockchain = get_blockchain()
 
     #loop through the blockchain and update balance
     for block in blockchain.chain:
         data = block.data.split("-->")
-        if Username == data[0]:
+        if username == data[0]:
             balance -= float(data[2])
-
-        elif Username == data[1]:
+        elif username == data[1]:
             balance += float(data[2])
-
-
-
     return balance
 
 #get the blockchain from mysql and convert to Blockchain object

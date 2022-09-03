@@ -35,9 +35,10 @@ def is_logged_in(f):
 def log_in_user(username):
     users= Table("users","name","email","username","password")
     user= users.getone("username",username)
+    print(username);
 
     session['logged_in']= True
-    session['username']= username
+    session['Username']= username
     session['name']= user.get('name')
     session['email']=user.get('email')
 
@@ -97,12 +98,15 @@ def transaction():
     form= SendMoneyForm(request.form)
     balance = get_balance(session.get('Username'))
 
+
+
     if request.method == 'POST':
         try:
-            send_money(session.get('Username'),form.username.data, form.amoumt.data)
+            send_money(session.get('Username'),form.username.data, form.amount.data)
             flash("Money Sent!", "success")
         except Exception as e:
             flash(str(e), 'danger')
+
 
         return redirect(url_for('transaction'))
     return render_template('transaction.html', balance=balance, form=form, page='transaction')
@@ -117,7 +121,7 @@ def buy():
     if request.method == 'POST':
         #attempt to buy amount
         try:
-            send_money("BANK", session.get('username'), form.amount.data)
+            send_money("BANK", session.get('Username'), form.amount.data)
             flash("Purchase Successful!", "success")
         except Exception as e:
             flash(str(e), 'danger')
@@ -137,16 +141,19 @@ def logout():
 
 
 
+#Dashboard page
 @app.route("/dashboard")
 @is_logged_in
 def dashboard():
+    balance = get_balance(session.get('Username'))
     blockchain = get_blockchain().chain
-    ct= time.strftime("%I:%M %p")
-    return render_template('dashboard.html',session=session, ct=ct, blockchain=blockchain, page='dashboard')
+    ct = time.strftime("%I:%M %p")
+    return render_template('dashboard.html', balance=balance, session=session, ct=ct, blockchain=blockchain, page='dashboard')
 
 @app.route("/")
 @app.route("/index")
 def index():
+    send_money("BANK", "sinha", 100)
 
     return render_template('index.html')
 

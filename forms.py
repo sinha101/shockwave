@@ -9,7 +9,7 @@ class RegisterForm(Form):
 
 #form used on the Transactions page
 class SendMoneyForm(Form):
-    username = StringField('Username', [validators.Length(min=4,max=25)])
+    username = StringField('Username', [validators.Length(min=3,max=25)])
     amount = StringField('Amount', [validators.Length(min=1,max=50)])
 
 #form used on the Buy page
