@@ -153,7 +153,7 @@ def dashboard():
 @app.route("/")
 @app.route("/index")
 def index():
-    send_money("BANK", "sinha", 100)
+
 
     return render_template('index.html')
 
